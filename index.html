@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>รายงานการทำงานประจำวัน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Sarabun:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --desk:#dfe4ea; --bar:#ffffff; --ink:#1b2733; --muted:#5a6878; --line:#c7cfd8;
+  --accent:#23507f; --accent-ink:#ffffff; --field:#eef4fb; --field-hover:#e2ecf8; --danger:#a3281d;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --desk:#1c2229; --bar:#252c35; --ink:#e6ebf0; --muted:#9aa7b4; --line:#3a4450;
+    --accent:#6f9fd4; --accent-ink:#0f1a26; --danger:#ef8a80;
+  }
+}
+:root[data-theme="dark"]{
+  --desk:#1c2229; --bar:#252c35; --ink:#e6ebf0; --muted:#9aa7b4; --line:#3a4450;
+  --accent:#6f9fd4; --accent-ink:#0f1a26; --danger:#ef8a80;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--desk);color:var(--ink);font-family:'IBM Plex Sans Thai','Leelawadee UI',Tahoma,sans-serif;font-size:14px}
+
+/* ---------- toolbar ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bar);border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:10px 20px}
+.bar h1{font-size:16px;font-weight:600;margin:0}
+.bar .state{font-size:12.5px;color:var(--muted);margin-left:2px}
+.bar .grow{flex:1}
+.bar .grp{display:flex;flex-wrap:wrap;gap:6px}
+.btn{font:inherit;font-size:13.5px;border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 12px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:500}
+.btn.primary:hover{filter:brightness(1.08);color:var(--accent-ink)}
+.btn.warn{color:var(--danger)}
+.btn.warn.arm{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn:disabled{opacity:.55;cursor:progress}
+.btn:focus-visible,.f:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+/* ---------- stage ---------- */
+.stage{padding:24px 0 60px;display:flex;flex-direction:column;align-items:center;gap:8px;zoom:var(--z,1)}
+.cap{width:794px;display:flex;align-items:baseline;gap:10px;color:var(--muted);font-size:13px;padding:14px 2px 2px}
+.cap b{color:var(--ink);font-weight:600}
+.cap .grow{flex:1}
+.cap .btn{padding:3px 10px;font-size:12.5px}
+.sheet{box-shadow:0 1px 2px rgba(20,30,40,.18),0 6px 20px rgba(20,30,40,.08)}
+
+/* ---------- paper (always light: it is the document) ---------- */
+.sheet{width:794px;min-height:1123px;background:#fff;color:#000;padding:58px 57px 34px;
+  font-family:'Sarabun','TH Sarabun New','Leelawadee UI',Tahoma,sans-serif;font-size:13px;line-height:1.5;position:relative}
+.sheet table{border-collapse:collapse;width:100%;table-layout:fixed}
+.title td{background:#DEEAF6;border:1px solid #000;text-align:center;font-weight:700;padding:3px 6px}
+.title .t1{font-size:21px;letter-spacing:.2px}
+.title .t2{font-size:17px}
+.title .t2 .pj{display:inline-block;min-width:300px;border-bottom:1.5px solid #000;margin-left:10px;text-align:center}
+
+.hdr{padding:8px 0 6px}
+.hl{display:flex;align-items:flex-end;gap:6px;min-height:25px;flex-wrap:wrap}
+.hl .half{display:flex;align-items:flex-end;gap:6px;flex:1;min-width:0}
+.hl .half.r{justify-content:flex-end}
+.hl .lab{white-space:nowrap}
+.line{border-bottom:1px solid #000}
+.hl .half .line{flex:1}
+.hl .half.r .line{flex:0 0 190px}
+.w{display:inline-block}
+.cbs{display:flex;flex-wrap:wrap;gap:2px 14px;align-items:center;flex:1;min-width:0}
+.hl.ck{flex-wrap:nowrap}
+.il span.f{white-space:nowrap;overflow:hidden}
+
+/* fields */
+.f{font:inherit;color:inherit;background:transparent;border:0;border-radius:0;padding:0 3px;margin:0;min-width:0;width:100%;height:21px;line-height:21px;display:block}
+input.f{background:var(--pf,#eef4fb)}
+input.f:hover{background:#e2ecf8}
+input.f:focus{background:#fff;outline:1.5px solid #23507f;outline-offset:0}
+input.f::placeholder{color:#8a96a3}
+input.f.hint::placeholder{color:#000;font-style:italic;opacity:1}
+span.f{white-space:pre-wrap;word-break:break-word;height:auto;min-height:21px}
+span.f.hint{color:#000;font-style:italic}
+.c .f{text-align:center}
+.il{display:inline-block;vertical-align:bottom}
+.il .f{display:inline-block}
+.w40{width:40px}.w60{width:60px}.w80{width:80px}.w90{width:90px}.w110{width:110px}.w120{width:120px}.w160{width:160px}
+input[type=time].f,input[type=date].f{padding:0 2px}
+
+/* checkboxes */
+.cb{display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+.cb input{position:absolute;opacity:0;width:1px;height:1px}
+.bx{width:12px;height:12px;border:1px solid #000;display:inline-flex;align-items:center;justify-content:center;font-size:11px;line-height:1;font-weight:700;background:#fff;flex:none}
+.cb input:focus-visible + .bx{outline:2px solid #23507f;outline-offset:1px}
+.cb input:checked + .bx::after{content:"✓"}
+
+/* main table */
+.t{border:1px solid #000}
+.t th{font-weight:400;border:1px solid #000;padding:2px 3px;line-height:1.3;vertical-align:middle;text-align:center}
+.t th .note{font-size:9.5px;line-height:1.35;margin-top:1px}
+.t td{padding:1px 3px;vertical-align:middle}
+tr.wk td{border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px dotted #000;height:29px}
+tr.sec td{border-top:1px solid #000;border-bottom:1px solid #000;text-align:center;height:29px}
+tr.sec td.R{border-left:1px solid #000}
+td.R{border-left:1px solid #000}
+td.ln{border-bottom:1px dotted #000}
+td.hd{text-align:center;font-size:13.5px}
+tr.mp td{height:25px}
+tr.mp td .cnt{border-bottom:1px solid #000;margin:0 6px}
+tr.sg td{height:26px}
+tr.sg.first td{border-top:1px solid #000}
+tr.cc td{border-top:1px solid #000;padding:4px 6px 6px}
+.sgl{display:flex;align-items:flex-end;gap:6px}
+.sgl .lab{white-space:nowrap}
+.sgl .line{flex:1}
+.ccs{display:flex;gap:4px 18px;flex-wrap:wrap;margin-top:2px}
+.ccs .cb{gap:6px}
+.ccs .line{width:125px}
+
+.sigbox{height:46px;display:flex;align-items:flex-end;justify-content:center;position:relative}
+.sigbox img{max-height:44px;max-width:100%;display:block}
+.sigbtn{font-family:'IBM Plex Sans Thai',sans-serif;font-size:12.5px;width:100%;height:40px;margin-bottom:2px;border:1px dashed #b8c3cf;background:#f6f9fc;color:#23507f;cursor:pointer}
+.sigbtn:hover{background:#eef4fb;border-color:#23507f}
+.sigact{position:absolute;right:0;top:0;display:flex;gap:4px}
+.sigact button{font-family:'IBM Plex Sans Thai',sans-serif;font-size:11.5px;background:#fff;border:1px solid #b8c3cf;border-radius:4px;padding:1px 7px;cursor:pointer;color:#23507f}
+.sigact button.del{color:#a3281d}
+.modal{position:fixed;inset:0;background:rgba(15,22,30,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.on{display:flex}
+.pad{background:var(--bar);color:var(--ink);border-radius:8px;padding:16px;width:min(620px,100%);box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.pad h2{font-size:15px;font-weight:600;margin:0 0 4px}
+.pad p{margin:0 0 10px;color:var(--muted);font-size:13px}
+.pad canvas{width:100%;height:230px;background:#fff;border:1px solid var(--line);border-radius:4px;touch-action:none;display:block;cursor:crosshair}
+.pad .row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pad .row .grow{flex:1}
+/* attachment */
+tr.at td{border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px dotted #000;height:32px}
+
+/* photos */
+.ph td{border:1px solid #000}
+.slot{height:256px;position:relative;display:flex;align-items:center;justify-content:center;padding:4px}
+.slot img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.slot label.pick{position:absolute;inset:4px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;
+  color:#5a6878;font-family:'IBM Plex Sans Thai',sans-serif;font-size:13px;cursor:pointer;border:1px dashed #b8c3cf;background:#f6f9fc}
+.slot label.pick:hover{background:#eef4fb;border-color:#23507f;color:#23507f}
+.slot label.pick input{position:absolute;opacity:0;width:1px;height:1px}
+.slot .rm{position:absolute;top:8px;right:8px;font-family:'IBM Plex Sans Thai',sans-serif;font-size:12px;background:#fff;border:1px solid #b8c3cf;border-radius:4px;padding:2px 8px;cursor:pointer;color:#a3281d}
+.ph tr.capr td{height:26px}
+
+/* export root */
+#exportRoot{position:absolute;left:-12000px;top:0;width:794px}
+#exportRoot .sheet{box-shadow:none}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--desk);
+  padding:9px 16px;border-radius:6px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion: reduce){.toast{transition:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div>
+    <h1>รายงานการทำงานประจำวัน</h1>
+    <div class="state" id="saveState">กำลังโหลด</div>
+  </div>
+  <div class="grow"></div>
+  <div class="grp">
+    <button class="btn" id="addAttach">เพิ่มหน้าเอกสารแนบ</button>
+    <button class="btn" id="addPhoto">เพิ่มหน้าภาพถ่าย</button>
+  </div>
+  <div class="grp">
+    <label class="btn" for="openJson">เปิดไฟล์ข้อมูล</label>
+    <input type="file" id="openJson" accept=".json,application/json" class="sr">
+    <button class="btn" id="saveJson">บันทึกไฟล์ข้อมูล</button>
+    <button class="btn warn" id="clearAll">ล้างฟอร์ม</button>
+  </div>
+  <div class="grp">
+    <button class="btn primary" id="expPdf">ส่งออก PDF</button>
+    <button class="btn primary" id="expDocx">ส่งออก Word</button>
+  </div>
+</header>
+
+<main class="stage" id="stage"></main>
+<div id="exportRoot" aria-hidden="true"></div>
+<div class="modal" id="sigModal" role="dialog" aria-modal="true" aria-labelledby="sigTitle">
+  <div class="pad">
+    <h2 id="sigTitle">เซ็นชื่อ</h2>
+    <p>ใช้เมาส์ นิ้ว หรือปากกา เซ็นในกรอบด้านล่าง</p>
+    <canvas id="sigCanvas"></canvas>
+    <div class="row"><button class="btn" id="sigClear">ล้าง</button><span class="grow"></span>
+      <button class="btn" id="sigCancel">ยกเลิก</button><button class="btn primary" id="sigSave">ใช้ลายเซ็นนี้</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@9.7.2/dist/index.iife.js"></script>
+<script>
+(function(){
+'use strict';
+const KEY='sre-drp-daily-report-v1';
+const WORK_ROWS=5, ATTACH_ROWS=24, PHOTOS_PER_PAGE=6;
+const MAN=['ผู้จัดการโครงการ','วิศวกรโครงการ','ผู้ช่วยโครงการ','สถาปนิก / วิศวกรออกแบบ','ผู้ควบคุมงาน','หัวหน้าคนงาน','ช่างเขียนแบบ',
+           'ช่างเทคนิค','ธุรการ','ช่างไม้','ช่างสี','คนงาน','แม่บ้าน','อื่นๆ'];
+const MACH=[{l:'Tower Crane'},{l:'Crane ขนาด',spec:1},{l:'รถบรรทุกขนาด',spec:1},{l:'Generator'},{l:'รถ',spec:1},{l:'อื่นๆ',spec:1}];
+const WEATHER=[['clear','แจ่มใส'],['cloudy','เมฆปกคลุม'],['windy','ลมแรง'],['drizzle','ฝนตกปรอยๆ'],['rain','ฝนตก'],['other','อื่นๆ']];
+const STOP=[['noise','งานเกิดเสียงดัง'],['smell','งานที่มีกลิ่น'],['spark','งานที่เกิดสะเก็ดไฟ'],['power','ไฟฟ้าดับ'],['other','อื่นๆ']];
+const HINT=['“(หากมีจำนวนรายการและรายละเอียดมากกว่าพื้นที่ใน','ตารางนี้ ให้กรอกในเอกสารแนบรายงานแทน)”'];
+const TH_MONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+const rows=(n,f)=>Array.from({length:n},(_,i)=>f(i));
+const workRow=()=>({no:'',item:'',place:'',workers:'',pct:'',note:''});
+const newAttach=()=>({rows:rows(ATTACH_ROWS,workRow)});
+const newPhotos=()=>({items:rows(PHOTOS_PER_PAGE,()=>({img:'',w:0,h:0,caption:''}))});
+function fresh(){
+  return {
+    project:'งานซ่อมแซมอาคารพระคลังข้างที่ฯ', to:'', attn:'', date:'', docNo:'',
+    weather:{clear:false,cloudy:false,windy:false,drizzle:false,rain:false,other:false,otherText:''},
+    stop:{noise:false,smell:false,spark:false,power:false,other:false,otherText:''},
+    start:'', end:'', hours:'',
+    work:rows(WORK_ROWS,workRow),
+    man:rows(14,()=>''), manOther:'',
+    mach:rows(6,()=>({spec:'',qty:''})),
+    problems:rows(5,()=>''), solutions:rows(5,()=>''),
+    reporter:{company:'บริษัท เดกคอร์ สตูดิโอ จำกัด',sign:'',signImg:'',signW:0,signH:0,name:'',date:'',c1:'',c2:''},
+    reviewer:{company:'บริษัท สุภัทรา เรียลเอสเตท จํากัด',sign:'',signImg:'',signW:0,signH:0,name:'',date:'',c1:'',c2:''},
+    cc:rows(4,()=>({on:false,text:''})),
+    attach:[newAttach()],
+    photos:[newPhotos()]
+  };
+}
+function merge(base,src){
+  if(Array.isArray(base)){ if(!Array.isArray(src)) return base; return src.map((v,i)=>merge(base[i]!==undefined?base[i]:base[0],v)); }
+  if(base&&typeof base==='object'){ const o={...base}; if(src&&typeof src==='object') for(const k in base) if(k in src) o[k]=merge(base[k],src[k]); return o; }
+  return (src===undefined||src===null)?base:src;
+}
+function normalize(s){
+  const b=fresh();
+  const o=merge(b,s||{});
+  // fixed-length arrays
+  const fix=(arr,n,mk)=>{arr=Array.isArray(arr)?arr.slice(0,n):[];while(arr.length<n)arr.push(mk());return arr;};
+  o.work=fix(o.work,WORK_ROWS,workRow); o.man=fix(o.man,14,()=>''); o.mach=fix(o.mach,6,()=>({spec:'',qty:''}));
+  o.problems=fix(o.problems,5,()=>''); o.solutions=fix(o.solutions,5,()=>''); o.cc=fix(o.cc,4,()=>({on:false,text:''}));
+  o.attach=(Array.isArray(s&&s.attach)?s.attach:b.attach).map(p=>({rows:fix((p&&p.rows||[]).map(r=>merge(workRow(),r)),ATTACH_ROWS,workRow)}));
+  o.photos=(Array.isArray(s&&s.photos)?s.photos:b.photos).map(p=>({items:fix((p&&p.items||[]).map(r=>merge({img:'',w:0,h:0,caption:''},r)),PHOTOS_PER_PAGE,()=>({img:'',w:0,h:0,caption:''}))}));
+  return o;
+}
+
+let S;
+try{ const raw=localStorage.getItem(KEY); S=normalize(raw?JSON.parse(raw):null); }catch(e){ S=fresh(); }
+
+/* ---------- helpers ---------- */
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function get(path){return path.split('.').reduce((o,k)=>o==null?undefined:o[k],S);}
+function set(path,v){const ks=path.split('.');let o=S;for(let i=0;i<ks.length-1;i++)o=o[ks[i]];o[ks[ks.length-1]]=v;}
+function thaiDate(v){ if(!v) return ''; const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v); if(!m) return v; return `${+m[3]} ${TH_MONTHS[+m[2]-1]} ${+m[1]+543}`; }
+function calcHours(){
+  const p=t=>{const m=/^(\d{1,2}):(\d{2})/.exec(t||'');return m?(+m[1])*60+(+m[2]):null;};
+  const a=p(S.start),b=p(S.end); if(a==null||b==null) return '';
+  let d=b-a; if(d<0) d+=1440; const h=d/60; return (Math.round(h*100)/100).toString();
+}
+const hoursOut=()=>S.hours||calcHours();
+const manTotal=()=>S.man.reduce((a,v)=>a+(parseFloat(v)||0),0);
+const totalPages=()=>1+S.attach.length+S.photos.length;
+
+let ED=true;
+function fld(path,o={}){
+  const v=get(path); const cls=o.cls||''; const type=o.type||'text';
+  if(ED){
+    const ph=o.ph!=null?o.ph:''; const im=o.num?' inputmode="decimal"':'';
+    return `<input class="f ${cls}" type="${type}" data-k="${path}" value="${esc(v)}" placeholder="${esc(ph)}"${im} aria-label="${esc(o.label||ph||path)}">`;
+  }
+  let show=v==null?'':String(v);
+  if(type==='date') show=thaiDate(show);
+  if(!show&&o.hint) return `<span class="f hint ${cls}">${esc(o.ph)}</span>`;
+  return `<span class="f ${cls}">${show?esc(show):'&nbsp;'}</span>`;
+}
+function calc(name,val){return `<span data-calc="${name}">${esc(val)}</span>`;}
+function box(path,label){
+  const on=!!get(path);
+  if(ED) return `<label class="cb"><input type="checkbox" data-k="${path}" ${on?'checked':''}><span class="bx"></span>${esc(label)}</label>`;
+  return `<span class="cb"><span class="bx">${on?'✓':''}</span>${esc(label)}</span>`;
+}
+function sigInner(who){
+  const o=S[who];
+  if(o.signImg) return `<img src="${o.signImg}" alt="ลายเซ็น">`+(ED?`<span class="sigact"><button data-sign="${who}">เซ็นใหม่</button><button class="del" data-unsign="${who}">ลบ</button></span>`:'');
+  return ED?`<button class="sigbtn" data-sign="${who}">คลิกเพื่อเซ็นชื่อ</button>`:'<span class="f">&nbsp;</span>';
+}
+const il=(path,w,o={})=>`<span class="il line ${w}">${fld(path,o)}</span>`;
+
+/* ---------- sheet templates ---------- */
+function titleBox(t){
+  return `<table class="title"><tr><td class="t1">${t}</td></tr>
+  <tr><td class="t2">โครงการ<span class="pj">${fld('project',{cls:'c',label:'ชื่อโครงการ'})}</span></td></tr></table>`;
+}
+function infoLines(){
+  return `<div class="hl"><div class="half"><span class="lab">ถึง :</span><span class="line">${fld('to',{label:'ถึง'})}</span></div>
+     <div class="half r"><span class="lab">วันที่ทำงาน :</span><span class="line">${fld('date',{type:'date',label:'วันที่ทำงาน'})}</span></div></div>
+   <div class="hl"><div class="half"><span class="lab">เรียน :</span><span class="line">${fld('attn',{label:'เรียน'})}</span></div>
+     <div class="half r"><span class="lab">เลขที่ :</span><span class="line">${fld('docNo',{label:'เลขที่'})}</span></div></div>`;
+}
+function sheetMain(){
+  const T=totalPages(); const nAtt=S.attach.length+S.photos.length;
+  const col=[646,1700,630,1000,630,520,1350,990,90,855,1784];
+  const cg='<colgroup>'+col.map(w=>`<col style="width:${(w/10244*100).toFixed(3)}%">`).join('')+'</colgroup>';
+  let h=titleBox('รายงานการทำงานประจำวัน');
+  h+=`<div class="hdr">${infoLines()}
+   <div class="hl ck"><span class="lab">อากาศ :</span><span class="cbs">${WEATHER.map(([k,l])=>box('weather.'+k,l)).join('')}${il('weather.otherText','w110',{label:'อากาศ อื่นๆ'})}</span></div>
+   <div class="hl ck"><span class="lab">การระงับงาน :</span><span class="cbs">${STOP.map(([k,l])=>box('stop.'+k,l)).join('')}${il('stop.otherText','w110',{label:'การระงับงาน อื่นๆ'})}</span></div>
+   <div class="hl"><span class="lab">เวลาเริ่มงาน :</span>${il('start','w90',{type:'time',cls:'c',label:'เวลาเริ่มงาน'})}<span>น.</span>
+     <span class="lab" style="margin-left:24px">เวลาเลิกงาน :</span>${il('end','w90',{type:'time',cls:'c',label:'เวลาเลิกงาน'})}<span>น.</span>
+     <span class="lab" style="margin-left:24px">รวมเวลาทำงาน :</span>${il('hours','w60',{cls:'c',num:1,ph:calcHours(),label:'รวมเวลาทำงาน'}).replace(ED?'':'&nbsp;',ED?'':esc(hoursOut())||'&nbsp;')}<span>ชั่วโมง</span></div>
+   <div class="hl"><span class="lab">(รายการงานที่ดำเนินการวันนี้)</span><span class="grow" style="flex:1"></span>
+     <span>เอกสารแนบ จำนวน <b style="font-weight:600">${calc('nAtt',nAtt)}</b> แผ่น (หน้า 1 / ${calc('tp',T)})</span></div>
+  </div>`;
+  h+=`<table class="t main">${cg}
+   <tr><th>ลำดับ<br>ที่</th><th colspan="5">รายการ<div class="note">โปรดทำเครื่องหมายดอกจัน (*) ท้ายข้อความ<br>กรณีเป็นงานที่เกิดสะเก็ดไฟ</div></th>
+     <th>สถานที่</th><th>จำนวน<br>คนงาน</th><th colspan="2">% งานที่<br>แล้วเสร็จ</th><th>หมายเหตุ</th></tr>`;
+  for(let i=0;i<WORK_ROWS;i++){
+    const hint=(i===1||i===2)?{hint:1,ph:HINT[i-1],cls:'hint'}:{};
+    h+=`<tr class="wk"><td class="c">${fld(`work.${i}.no`,{label:'ลำดับ'})}</td><td colspan="5">${fld(`work.${i}.item`,{label:'รายการ',...hint})}</td>
+      <td>${fld(`work.${i}.place`,{label:'สถานที่'})}</td><td class="c">${fld(`work.${i}.workers`,{num:1,label:'จำนวนคนงาน'})}</td>
+      <td colspan="2" class="c">${fld(`work.${i}.pct`,{num:1,label:'% งานที่แล้วเสร็จ'})}</td><td>${fld(`work.${i}.note`,{label:'หมายเหตุ'})}</td></tr>`;
+  }
+  // right column content per row index (rows: man0..6, machHeader, mach0..2)
+  const right=[
+    ln('problems.0'),ln('problems.1'),ln('problems.2'),ln('problems.3'),ln('problems.4'),
+    `<td colspan="5" class="R hd">แนวทางการแก้ไข</td>`,
+    ln('solutions.0'),ln('solutions.1'),ln('solutions.2'),ln('solutions.3'),ln('solutions.4')
+  ];
+  function ln(p){return `<td colspan="5" class="R ln">${fld(p,{label:p.startsWith('p')?'ปัญหาและอุปสรรค':'แนวทางการแก้ไข'})}</td>`;}
+  h+=`<tr class="sec"><td colspan="6">กำลังคนประจำโครงการ (รวม = <b style="font-weight:600">${calc('man',manTotal()||'')}</b> คน)</td><td colspan="5" class="R">ปัญหาและอุปสรรค</td></tr>`;
+  for(let i=0;i<7;i++){
+    const j=i+7;
+    const lab2 = j===13 ? `${j+1}. อื่นๆ ${ED?`<span class="il line w60">${fld('manOther',{label:'อื่นๆ ระบุ'})}</span>`:(S.manOther?esc(S.manOther):'')}` : `${j+1}. ${esc(MAN[j])}`;
+    h+=`<tr class="mp"><td colspan="2" style="border-left:1px solid #000">${i+1}. ${esc(MAN[i])}</td><td class="c"><div class="cnt">${fld('man.'+i,{num:1,label:MAN[i]})}</div></td>
+      <td style="white-space:nowrap">${lab2}</td><td colspan="2" class="c"><div class="cnt">${fld('man.'+j,{num:1,label:MAN[j]})}</div></td>${right[i]}</tr>`;
+  }
+  h+=`<tr class="sec mh"><td colspan="6">เครื่องจักร (ระบุจำนวน)</td>${right[7].replace('class="R ln"','class="R ln" style="border-top:0;border-bottom:1px dotted #000"')}</tr>`;
+  for(let i=0;i<3;i++){
+    const a=MACH[i],b=MACH[i+3];
+    const lab=(m,k)=>`${k+1}. ${esc(m.l)}${m.spec?` <span class="il line w${k===4?'60':'60'}">${fld(`mach.${k}.spec`,{label:m.l+' ระบุ'})}</span>`:''}`;
+    h+=`<tr class="mp"><td colspan="2" style="border-left:1px solid #000;white-space:nowrap">${lab(a,i)}</td><td class="c"><div class="cnt">${fld(`mach.${i}.qty`,{num:1,label:a.l+' จำนวน'})}</div></td>
+      <td style="white-space:nowrap">${lab(b,i+3)}</td><td colspan="2" class="c"><div class="cnt">${fld(`mach.${i+3}.qty`,{num:1,label:b.l+' จำนวน'})}</div></td>${right[8+i]}</tr>`;
+  }
+  const sg=(who,label)=>[
+    `<div class="sgl"><span class="lab">${label} :</span><span class="line">${fld(who+'.company',{label:label})}</span></div>`,
+    `<div class="sgl"><span class="lab">ลายเซ็น :</span><span class="line sigbox">${sigInner(who)}</span></div>`,
+    `<div class="sgl"><span class="lab">ชื่อ :</span><span class="line">${fld(who+'.name',{label:'ชื่อ'})}</span></div>`,
+    `<div class="sgl"><span class="lab">วันที่ :</span><span class="line">${fld(who+'.date',{type:'date',label:'วันที่'})}</span></div>`,
+    `<div class="sgl"><span class="lab">ข้อเสนอแนะ :</span><span class="line">${fld(who+'.c1',{label:'ข้อเสนอแนะ'})}</span></div>`,
+    `<div class="sgl"><span class="line">${fld(who+'.c2',{label:'ข้อเสนอแนะ บรรทัด 2'})}</span></div>`
+  ];
+  const L=sg('reporter','รายงานโดย'),R=sg('reviewer','ทบทวนโดย');
+  for(let i=0;i<L.length;i++) h+=`<tr class="sg${i===0?' first':''}"><td colspan="6" style="padding:1px 8px">${L[i]}</td><td colspan="5" class="R" style="padding:1px 8px">${R[i]}</td></tr>`;
+  h+=`<tr class="cc"><td colspan="11"><div>สำเนา :</div><div class="ccs">${S.cc.map((_,i)=>`<span class="cb" style="gap:6px">${box(`cc.${i}.on`,'')}<span class="il line" style="width:130px">${fld(`cc.${i}.text`,{label:'สำเนาถึง'})}</span></span>`).join('')}</div></td></tr>`;
+  h+='</table>';
+  return h;
+}
+function sheetAttach(pi,pageNo,T){
+  const col=[646,4479,1350,990,945,1784];
+  const cg='<colgroup>'+col.map(w=>`<col style="width:${(w/10194*100).toFixed(3)}%">`).join('')+'</colgroup>';
+  let h=titleBox('เอกสารแนบรายงานการทำงานประจำวัน');
+  h+=`<div class="hdr">${infoLines()}<div class="hl"><span class="lab">(รายการงานที่ดำเนินการวันนี้)</span><span style="flex:1"></span><span>หน้า ${pageNo} / ${T}</span></div></div>`;
+  h+=`<table class="t">${cg}<tr><th>ลำดับ<br>ที่</th><th>รายการ<div class="note">โปรดทำเครื่องหมายดอกจัน (*) ท้ายข้อความ<br>กรณีเป็นงานที่เกิดสะเก็ดไฟ</div></th><th>สถานที่</th><th>จำนวน<br>คนงาน</th><th>% งานที่<br>แล้วเสร็จ</th><th>หมายเหตุ</th></tr>`;
+  for(let i=0;i<ATTACH_ROWS;i++){
+    const p=`attach.${pi}.rows.${i}`;
+    h+=`<tr class="at"><td class="c">${fld(p+'.no',{label:'ลำดับ'})}</td><td>${fld(p+'.item',{label:'รายการ'})}</td><td>${fld(p+'.place',{label:'สถานที่'})}</td>
+      <td class="c">${fld(p+'.workers',{num:1,label:'จำนวนคนงาน'})}</td><td class="c">${fld(p+'.pct',{num:1,label:'% งานที่แล้วเสร็จ'})}</td><td>${fld(p+'.note',{label:'หมายเหตุ'})}</td></tr>`;
+  }
+  return h+'</table>';
+}
+function sheetPhotos(pi,pageNo,T){
+  let h=titleBox('ภาพถ่ายการทำงานประจำวัน');
+  h+=`<div class="hdr">${infoLines()}<div class="hl"><span class="lab">(รายการงานที่ดำเนินการวันนี้)</span><span style="flex:1"></span><span>หน้า ${pageNo} / ${T}</span></div></div>`;
+  h+='<table class="ph">';
+  const items=S.photos[pi].items;
+  for(let r=0;r<3;r++){
+    h+='<tr>';
+    for(let c=0;c<2;c++){
+      const k=r*2+c, it=items[k];
+      let inner='';
+      if(it.img) inner=`<img src="${it.img}" alt="ภาพถ่ายที่ ${k+1}">`+(ED?`<button class="rm" data-rmimg="${pi}.${k}">ลบรูป</button>`:'');
+      else if(ED) inner=`<label class="pick"><input type="file" accept="image/*" data-img="${pi}.${k}">เพิ่มรูปภาพ<span style="font-size:12px">แตะหรือคลิกเพื่อเลือกไฟล์</span></label>`;
+      h+=`<td><div class="slot">${inner}</div></td>`;
+    }
+    h+='</tr><tr class="capr">';
+    for(let c=0;c<2;c++){ const k=r*2+c; h+=`<td class="c">${fld(`photos.${pi}.items.${k}.caption`,{label:'คำบรรยายภาพ',ph:ED?'คำบรรยายภาพ':''})}</td>`; }
+    h+='</tr>';
+  }
+  return h+'</table>';
+}
+function buildSheets(editable){
+  ED=editable;
+  const T=totalPages(); const out=[];
+  out.push({kind:'main',name:'รายงานการทำงานประจำวัน',html:sheetMain()});
+  let n=2;
+  S.attach.forEach((_,i)=>out.push({kind:'attach',idx:i,name:'เอกสารแนบ',html:sheetAttach(i,n++,T)}));
+  S.photos.forEach((_,i)=>out.push({kind:'photo',idx:i,name:'ภาพถ่ายการทำงาน',html:sheetPhotos(i,n++,T)}));
+  ED=true;
+  return out;
+}
+
+/* ---------- render editor ---------- */
+const stage=document.getElementById('stage');
+function render(){
+  const y=window.scrollY;
+  const sh=buildSheets(true); const T=sh.length;
+  stage.innerHTML=sh.map((s,i)=>`<div class="cap"><b>หน้า ${i+1}/${T}</b><span>${s.name}</span><span class="grow"></span>
+    ${s.kind!=='main'?`<button class="btn warn" data-rmpage="${s.kind}.${s.idx}">ลบหน้านี้</button>`:''}</div>
+    <section class="sheet">${s.html}</section>`).join('');
+  window.scrollTo(0,y);
+}
+function refreshCalcs(){
+  document.querySelectorAll('[data-calc="man"]').forEach(e=>e.textContent=manTotal()||'');
+  const hr=document.querySelector('input[data-k="hours"]'); if(hr) hr.placeholder=calcHours();
+}
+
+/* ---------- persistence ---------- */
+const stateEl=document.getElementById('saveState');
+let saveT=null;
+function save(){
+  clearTimeout(saveT);
+  stateEl.textContent='กำลังบันทึกร่าง…';
+  saveT=setTimeout(()=>{
+    try{ localStorage.setItem(KEY,JSON.stringify(S)); const d=new Date(); stateEl.textContent=`บันทึกร่างอัตโนมัติแล้ว ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} น.`; }
+    catch(e){ stateEl.textContent='บันทึกร่างไม่ได้: พื้นที่เก็บในเบราว์เซอร์เต็ม (ลองลดจำนวนรูป หรือใช้ “บันทึกไฟล์ข้อมูล”)'; }
+  },350);
+}
+
+/* ---------- events ---------- */
+stage.addEventListener('input',e=>{
+  const t=e.target; const k=t.dataset&&t.dataset.k; if(!k) return;
+  const v=t.type==='checkbox'?t.checked:t.value;
+  set(k,v);
+  if(t.type!=='checkbox') document.querySelectorAll(`[data-k="${CSS.escape(k)}"]`).forEach(o=>{if(o!==t)o.value=v;});
+  refreshCalcs(); save();
+});
+stage.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.type==='checkbox'&&t.dataset.k){ set(t.dataset.k,t.checked); save(); }
+  if(t.dataset&&t.dataset.img&&t.files&&t.files[0]){
+    const [pi,k]=t.dataset.img.split('.').map(Number);
+    loadImage(t.files[0]).then(r=>{Object.assign(S.photos[pi].items[k],r);save();render();}).catch(()=>toast('เปิดไฟล์รูปนี้ไม่ได้ ลองใช้ไฟล์ JPG หรือ PNG'));
+  }
+});
+stage.addEventListener('click',e=>{
+  const rm=e.target.closest('[data-rmimg]');
+  if(rm){ const [pi,k]=rm.dataset.rmimg.split('.').map(Number); Object.assign(S.photos[pi].items[k],{img:'',w:0,h:0}); save(); render(); return; }
+  const sg=e.target.closest('[data-sign]'); if(sg){ openSig(sg.dataset.sign); return; }
+  const us=e.target.closest('[data-unsign]'); if(us){ Object.assign(S[us.dataset.unsign],{signImg:'',signW:0,signH:0}); save(); render(); return; }
+  const rp=e.target.closest('[data-rmpage]');
+  if(rp){
+    if(!armed(rp,'กดอีกครั้งเพื่อลบ')) return;
+    const [kind,i]=rp.dataset.rmpage.split('.'); (kind==='attach'?S.attach:S.photos).splice(+i,1); save(); render(); toast('ลบหน้าแล้ว');
+  }
+});
+function armed(btn,msg){
+  if(btn.dataset.arm==='1'){ btn.dataset.arm=''; return true; }
+  const old=btn.textContent; btn.dataset.arm='1'; btn.classList.add('arm'); btn.textContent=msg;
+  setTimeout(()=>{btn.dataset.arm='';btn.classList.remove('arm');btn.textContent=old;},3000);
+  return false;
+}
+function loadImage(file){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>{const im=new Image();im.onload=()=>{
+      const max=1400; let w=im.naturalWidth,h=im.naturalHeight; const s=Math.min(1,max/Math.max(w,h)); w=Math.round(w*s); h=Math.round(h*s);
+      const c=document.createElement('canvas'); c.width=w; c.height=h; const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,w,h); x.drawImage(im,0,0,w,h);
+      res({img:c.toDataURL('image/jpeg',0.82),w,h});
+    };im.onerror=rej;im.src=fr.result;};
+    fr.onerror=rej; fr.readAsDataURL(file);
+  });
+}
+document.getElementById('addAttach').onclick=()=>{S.attach.push(newAttach());save();render();toast('เพิ่มหน้าเอกสารแนบแล้ว');};
+document.getElementById('addPhoto').onclick=()=>{S.photos.push(newPhotos());save();render();toast('เพิ่มหน้าภาพถ่ายแล้ว');};
+document.getElementById('clearAll').onclick=e=>{
+  if(!armed(e.currentTarget,'กดอีกครั้งเพื่อล้าง')) return;
+  S=fresh(); save(); render(); toast('ล้างฟอร์มแล้ว');
+};
+document.getElementById('saveJson').onclick=async()=>{
+  const blob=new Blob([JSON.stringify(S)],{type:'application/json'});
+  await saveFile(`ข้อมูลรายงาน_${S.date||'ไม่ระบุวันที่'}.json`,blob,'บันทึกไฟล์ข้อมูลแล้ว');
+};
+document.getElementById('openJson').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  f.text().then(t=>{S=normalize(JSON.parse(t));save();render();toast('เปิดไฟล์ข้อมูลแล้ว');})
+    .catch(()=>toast('ไฟล์นี้ไม่ใช่ไฟล์ข้อมูลรายงาน'))
+    .finally(()=>{e.target.value='';});
+};
+
+/* ---------- toast / downloads ---------- */
+const toastEl=document.getElementById('toast'); let tT;
+function toast(m){toastEl.textContent=m;toastEl.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>toastEl.classList.remove('on'),2600);}
+const dlP=(window.claude&&typeof window.claude.use==='function')?window.claude.use('downloads').catch(()=>null):Promise.resolve(null);
+async function saveFile(name,blob,okMsg){
+  const dl=await dlP;
+  if(dl){
+    try{ const r=await dl.save({filename:name,data:blob}); if(r&&r.status==='saved') toast(okMsg); }
+    catch(e){
+      const c=e&&e.code;
+      if(c==='declined') return;
+      if(c==='rate_limited') toast('มีหน้าต่างบันทึกไฟล์เปิดอยู่ ลองใหม่อีกครั้ง');
+      else toast('บันทึกไฟล์ในมุมมองนี้ไม่ได้');
+    }
+    return;
+  }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),8000); toast(okMsg);
+}
+const fileBase=()=>`รายงานประจำวัน_${S.date||'ไม่ระบุวันที่'}${S.docNo?'_'+String(S.docNo).replace(/[\\/:*?"<>|]/g,'-'):''}`;
+
+/* ---------- PDF ---------- */
+const expRoot=document.getElementById('exportRoot');
+document.getElementById('expPdf').onclick=async e=>{
+  const btn=e.currentTarget; if(!window.html2canvas||!window.jspdf){toast('โหลดตัวสร้าง PDF ไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่');return;}
+  btn.disabled=true; const old=btn.textContent; btn.textContent='กำลังสร้าง PDF…';
+  try{
+    if(document.fonts&&document.fonts.ready) await document.fonts.ready;
+    const sh=buildSheets(false);
+    expRoot.innerHTML=sh.map(s=>`<section class="sheet">${s.html}</section>`).join('');
+    await Promise.all([...expRoot.querySelectorAll('img')].map(i=>i.complete?0:new Promise(r=>{i.onload=i.onerror=r;})));
+    const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true});
+    const els=[...expRoot.querySelectorAll('.sheet')];
+    for(let i=0;i<els.length;i++){
+      const cv=await window.html2canvas(els[i],{scale:2.2,backgroundColor:'#ffffff',useCORS:true,logging:false,windowWidth:900});
+      const img=cv.toDataURL('image/jpeg',0.92);
+      const ratio=cv.height/cv.width; let w=210,h=210*ratio; if(h>297){h=297;w=297/ratio;}
+      if(i>0) pdf.addPage('a4','portrait');
+      pdf.addImage(img,'JPEG',(210-w)/2,0,w,h,undefined,'FAST');
+    }
+    await saveFile(fileBase()+'.pdf',pdf.output('blob'),'ส่งออก PDF แล้ว');
+  }catch(err){ console.error(err); toast('สร้าง PDF ไม่สำเร็จ ลองใหม่อีกครั้ง'); }
+  finally{ expRoot.innerHTML=''; btn.disabled=false; btn.textContent=old; }
+};
+
+/* ---------- Word (docx) ---------- */
+document.getElementById('expDocx').onclick=async e=>{
+  const btn=e.currentTarget; if(!window.docx){toast('โหลดตัวสร้างไฟล์ Word ไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่');return;}
+  btn.disabled=true; const old=btn.textContent; btn.textContent='กำลังสร้าง Word…';
+  try{ const blob=await window.docx.Packer.toBlob(buildDocx()); await saveFile(fileBase()+'.docx',blob,'ส่งออก Word แล้ว'); }
+  catch(err){ console.error(err); toast('สร้างไฟล์ Word ไม่สำเร็จ ลองใหม่อีกครั้ง'); }
+  finally{ btn.disabled=false; btn.textContent=old; }
+};
+function b64ToBytes(dataUrl){const b=atob(dataUrl.split(',')[1]);const u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;}
+
+function buildDocx(){
+  const D=window.docx; const FONT='Angsana New'; const NB='\u00A0';
+  const fnt={ascii:FONT,hAnsi:FONT,cs:FONT,eastAsia:FONT};
+  const R=(t,o={})=>new D.TextRun({text:String(t==null?'':t),font:fnt,size:o.size||28,bold:!!o.b,italics:!!o.i,color:o.color,underline:o.u?{type:D.UnderlineType.SINGLE}:undefined});
+  const CB=on=>new D.TextRun({text:on?'☑':'☐',font:{ascii:'Segoe UI Symbol',hAnsi:'Segoe UI Symbol',cs:'Segoe UI Symbol',eastAsia:'Segoe UI Symbol'},size:24});
+  const U=(v,n=10,o={})=>R(v?`${NB}${v}${NB}`:NB.repeat(n),{...o,u:true});
+  const P=(runs,o={})=>new D.Paragraph({children:[].concat(runs),alignment:o.a,spacing:{before:0,after:0,line:240},keepNext:o.keepNext});
+  const CEN=D.AlignmentType.CENTER, RIGHT=D.AlignmentType.RIGHT;
+  const solid={style:D.BorderStyle.SINGLE,size:4,color:'000000'};
+  const dotted={style:D.BorderStyle.DOTTED,size:4,color:'000000'};
+  const none={style:D.BorderStyle.NONE,size:0,color:'FFFFFF'};
+  const C=(paras,w,o={})=>new D.TableCell({children:[].concat(paras),width:{size:w,type:D.WidthType.DXA},columnSpan:o.span,
+    shading:o.fill?{type:D.ShadingType.CLEAR,color:'auto',fill:o.fill}:undefined,verticalAlign:o.v||D.VerticalAlign.CENTER,
+    borders:{top:o.t||solid,bottom:o.b||solid,left:o.l||solid,right:o.r||solid},margins:{left:o.ml!=null?o.ml:70,right:70,top:0,bottom:0}});
+  const TR=(cells,h,exact)=>new D.TableRow({children:cells,cantSplit:true,height:h?{value:h,rule:exact?D.HeightRule.EXACT:D.HeightRule.ATLEAST}:undefined});
+  const T=(rs,cols)=>new D.Table({rows:rs,columnWidths:cols,width:{size:cols.reduce((a,b)=>a+b,0),type:D.WidthType.DXA},layout:D.TableLayoutType.FIXED});
+  const gap=(pb)=>new D.Paragraph({children:[R('',{size:6})],spacing:{before:0,after:0,line:120},pageBreakBefore:!!pb});
+  const NBd={t:none,b:none,l:none,r:none};
+  const val=(v,o={})=>C(P(R(v||'')),o.w,{...NBd,b:solid,...o});
+  const T_ALL=10196;
+  const thDate=v=>thaiDate(v);
+  const TP=totalPages();
+
+  function title(t){
+    return T([TR([C(P(R(t,{b:1,size:40}),{a:CEN}),T_ALL,{fill:'DEEAF6'})],498),
+              TR([C(P([R('โครงการ'+NB+NB+NB,{b:1,size:36}),R(`${NB}${NB}${S.project}${NB}${NB}`,{b:1,size:36,u:1})],{a:CEN}),T_ALL,{fill:'DEEAF6'})],498)],[T_ALL]);
+  }
+  const out=[];
+  /* ---- page 1 ---- */
+  out.push(title('รายงานการทำงานประจำวัน'),gap());
+  const wx=[R('อากาศ :'+NB+NB)]; WEATHER.forEach(([k,l])=>{wx.push(CB(S.weather[k]),R(NB+l+NB+NB+NB));}); wx.push(U(S.weather.otherText,14));
+  const sx=[R('การระงับงาน :'+NB+NB)]; STOP.forEach(([k,l])=>{sx.push(CB(S.stop[k]),R(NB+l+NB+NB+NB));}); sx.push(U(S.stop.otherText,14));
+  const nAtt=S.attach.length+S.photos.length;
+  // header table uses a 4-col grid but split row needs consistent grid: use 5 cols
+  const HG=[950,4000,750,900,3596];
+  const hc=(runs,w,o={})=>C(P(runs,{a:o.a}),w,{...NBd,...o});
+  const hdr=T([
+    TR([hc(R('ถึง :'),HG[0]),val(S.to,{w:HG[1]}),hc(R('วันที่ทำงาน :'),HG[2]+HG[3],{span:2,a:RIGHT}),val(thDate(S.date),{w:HG[4]})],340),
+    TR([hc(R('เรียน :'),HG[0]),val(S.attn,{w:HG[1]}),hc(R('เลขที่ :'),HG[2]+HG[3],{span:2,a:RIGHT}),val(S.docNo,{w:HG[4]})],340),
+    TR([hc(wx,T_ALL,{span:5})],340),
+    TR([hc(sx,T_ALL,{span:5})],340),
+    TR([hc([R('เวลาเริ่มงาน :'+NB),U(S.start,12),R(NB+'น.'+NB.repeat(8)+'เวลาเลิกงาน :'+NB),U(S.end,12),R(NB+'น.'+NB.repeat(8)+'รวมเวลาทำงาน :'+NB),U(hoursOut(),8),R(NB+'ชั่วโมง')],T_ALL,{span:5})],340),
+    TR([hc(R('(รายการงานที่ดำเนินการวันนี้)'),HG[0]+HG[1]+HG[2],{span:3}),hc(R(`เอกสารแนบ จำนวน ${nAtt} แผ่น (หน้า 1 / ${TP})`),HG[3]+HG[4],{span:2,a:RIGHT})],340)
+  ],HG);
+  out.push(hdr,gap());
+
+  const G=[646,1509,630,1080,630,630,1350,990,90,855,1784];
+  const sum=(a,b)=>G.slice(a,b+1).reduce((x,y)=>x+y,0);
+  const LW=sum(0,5), RW=sum(6,10);
+  const rs=[];
+  const note=[P(R('รายการ'),{a:CEN}),P(R('โปรดทำเครื่องหมายดอกจัน (*) ท้ายข้อความ',{size:20}),{a:CEN}),P(R('กรณีเป็นงานที่เกิดสะเก็ดไฟ',{size:20}),{a:CEN})];
+  rs.push(TR([C([P(R('ลำดับ'),{a:CEN}),P(R('ที่'),{a:CEN})],G[0]),C(note,sum(1,5),{span:5}),C(P(R('สถานที่'),{a:CEN}),G[6]),
+    C([P(R('จำนวน'),{a:CEN}),P(R('คนงาน'),{a:CEN})],G[7]),C([P(R('% งานที่'),{a:CEN}),P(R('แล้วเสร็จ'),{a:CEN})],sum(8,9),{span:2}),C(P(R('หมายเหตุ'),{a:CEN}),G[10])],700));
+  S.work.forEach((w,i)=>{
+    const d={t:i===0?solid:dotted,b:dotted};
+    const item=(!w.item&&(i===1||i===2))?R(HINT[i-1],{i:1}):R(w.item);
+    rs.push(TR([C(P(R(w.no),{a:CEN}),G[0],d),C(P(item),sum(1,5),{...d,span:5}),C(P(R(w.place)),G[6],d),C(P(R(w.workers),{a:CEN}),G[7],d),
+      C(P(R(w.pct),{a:CEN}),sum(8,9),{...d,span:2}),C(P(R(w.note)),G[10],d)],340));
+  });
+  const mt=manTotal();
+  rs.push(TR([C(P(R(`กำลังคนประจำโครงการ (รวม = ${mt||NB+NB+NB+NB} คน)`),{a:CEN}),LW,{span:6}),C(P(R('ปัญหาและอุปสรรค'),{a:CEN}),RW,{span:5})],340));
+  const rightCell=(txt,i,hdr)=>hdr?C(P(R('แนวทางการแก้ไข',{size:26}),{a:CEN}),RW,{span:5,t:dotted,b:dotted}):C(P(R(txt)),RW,{span:5,t:i===0?solid:dotted,b:dotted});
+  const RC=[...S.problems.map((p,i)=>()=>rightCell(p,i)),()=>rightCell('',0,true),...S.solutions.map((p,i)=>()=>rightCell(p,i+1))];
+  const leftB={t:none,b:none,l:none,r:none};
+  const cntCell=(v,w,span)=>C(P(R(v),{a:CEN}),w,{...leftB,b:solid,span,ml:40});
+  for(let i=0;i<7;i++){
+    const j=i+7;
+    const lab2=j===13?[R(`${j+1}. อื่นๆ `),U(S.manOther,6)]:R(`${j+1}. ${MAN[j]}`);
+    rs.push(TR([C(P(R(`${i+1}. ${MAN[i]}`)),sum(0,1),{...leftB,l:solid,span:2}),cntCell(S.man[i],G[2]),C(P(lab2),G[3],leftB),cntCell(S.man[j],sum(4,5),2),RC[i]()],300));
+  }
+  rs.push(TR([C(P(R('เครื่องจักร (ระบุจำนวน)'),{a:CEN}),LW,{span:6}),RC[7]()],340));
+  const mlab=(k)=>{const m=MACH[k];return m.spec?[R(`${k+1}. ${m.l} `),U(S.mach[k].spec,6)]:R(`${k+1}. ${m.l}`);};
+  for(let i=0;i<3;i++){
+    rs.push(TR([C(P(mlab(i)),sum(0,1),{...leftB,l:solid,span:2}),cntCell(S.mach[i].qty,G[2]),C(P(mlab(i+3)),G[3],leftB),cntCell(S.mach[i+3].qty,sum(4,5),2),RC[8+i]()],300));
+  }
+  const TAB=(o={})=>new D.TextRun({children:[new D.Tab()],font:fnt,size:28,underline:{type:D.UnderlineType.SINGLE}});
+  const sgRows=who=>{const o=S[who];const v=x=>x?R(NB+x+NB,{u:1}):null;return [
+    [R((who==='reporter'?'รายงานโดย':'ทบทวนโดย')+' :'+NB+NB),v(o.company),TAB()],
+    [R('ลายเซ็น :'+NB+NB),TAB()],[R('ชื่อ :'+NB+NB),v(o.name),TAB()],[R('วันที่ :'+NB+NB),v(thDate(o.date)),TAB()],
+    [R('ข้อเสนอแนะ :'+NB+NB),v(o.c1),TAB()],[v(o.c2),TAB()]].map(a=>a.filter(Boolean));};
+  const Ls=sgRows('reporter'),Rs=sgRows('reviewer');
+  const SP=(runs,w)=>new D.Paragraph({children:runs,spacing:{before:0,after:0,line:240},tabStops:[{type:D.TabStopType.RIGHT,position:w-260}]});
+  for(let i=0;i<Ls.length;i++){
+    const t=i===0?solid:none;
+    const cellP=(who,runs,w)=>{
+      const ps=[SP(runs,w)]; const o=S[who];
+      if(i===1&&o.signImg&&o.signW){
+        const k=Math.min(44/o.signH,200/o.signW);
+        ps.unshift(new D.Paragraph({indent:{left:1100},spacing:{before:40,after:0},children:[new D.ImageRun({type:'png',data:b64ToBytes(o.signImg),transformation:{width:Math.round(o.signW*k),height:Math.round(o.signH*k)}})]}));
+      }
+      return ps;
+    };
+    rs.push(TR([C(cellP('reporter',Ls[i],LW),LW,{span:6,t,b:none,ml:110,v:D.VerticalAlign.BOTTOM}),C(cellP('reviewer',Rs[i],RW),RW,{span:5,t,b:none,ml:110,v:D.VerticalAlign.BOTTOM})],320));
+  }
+  const ccr=[R('สำเนา :')];
+  const ccl=[];S.cc.forEach(c=>{ccl.push(CB(c.on),R(NB),U(c.text,22),R(NB.repeat(5)));});
+  rs.push(TR([C([P(ccr),P(ccl)],T_ALL,{span:11,ml:110})],670));
+  out.push(T(rs,G));
+
+  /* ---- attachments ---- */
+  let pn=2;
+  const AG=[646,4479,1350,990,945,1784];
+  S.attach.forEach(pg=>{
+    out.push(gap(true),title('เอกสารแนบรายงานการทำงานประจำวัน'),gap());
+    out.push(T([
+      TR([hc(R('ถึง :'),HG[0]),val(S.to,{w:HG[1]}),hc(R('วันที่ทำงาน :'),HG[2]+HG[3],{span:2,a:RIGHT}),val(thDate(S.date),{w:HG[4]})],340),
+      TR([hc(R('เรียน :'),HG[0]),val(S.attn,{w:HG[1]}),hc(R('เลขที่ :'),HG[2]+HG[3],{span:2,a:RIGHT}),val(S.docNo,{w:HG[4]})],340),
+      TR([hc(R('(รายการงานที่ดำเนินการวันนี้)'),HG[0]+HG[1]+HG[2],{span:3}),hc(R(`หน้า ${pn++} / ${TP}`),HG[3]+HG[4],{span:2,a:RIGHT})],340)
+    ],HG),gap());
+    const ar=[TR([C([P(R('ลำดับ'),{a:CEN}),P(R('ที่'),{a:CEN})],AG[0]),C(note,AG[1]),C(P(R('สถานที่'),{a:CEN}),AG[2]),
+      C([P(R('จำนวน'),{a:CEN}),P(R('คนงาน'),{a:CEN})],AG[3]),C([P(R('% งานที่'),{a:CEN}),P(R('แล้วเสร็จ'),{a:CEN})],AG[4]),C(P(R('หมายเหตุ'),{a:CEN}),AG[5])],700)];
+    pg.rows.forEach((w,i)=>{
+      const d={t:i===0?solid:dotted,b:i===pg.rows.length-1?solid:dotted};
+      ar.push(TR([C(P(R(w.no),{a:CEN}),AG[0],d),C(P(R(w.item)),AG[1],d),C(P(R(w.place)),AG[2],d),C(P(R(w.workers),{a:CEN}),AG[3],d),C(P(R(w.pct),{a:CEN}),AG[4],d),C(P(R(w.note)),AG[5],d)],380));
+    });
+    out.push(T(ar,AG));
+  });
+
+  /* ---- photos ---- */
+  const PG=[5098,5098];
+  S.photos.forEach(pg=>{
+    out.push(gap(true),title('ภาพถ่ายการทำงานประจำวัน'),gap());
+    out.push(T([
+      TR([hc(R('ถึง :'),HG[0]),val(S.to,{w:HG[1]}),hc(R('วันที่ทำงาน :'),HG[2]+HG[3],{span:2,a:RIGHT}),val(thDate(S.date),{w:HG[4]})],340),
+      TR([hc(R('เรียน :'),HG[0]),val(S.attn,{w:HG[1]}),hc(R('เลขที่ :'),HG[2]+HG[3],{span:2,a:RIGHT}),val(S.docNo,{w:HG[4]})],340),
+      TR([hc(R('(รายการงานที่ดำเนินการวันนี้)'),HG[0]+HG[1]+HG[2],{span:3}),hc(R(`หน้า ${pn++} / ${TP}`),HG[3]+HG[4],{span:2,a:RIGHT})],340)
+    ],HG),gap());
+    const pr=[];
+    for(let r=0;r<3;r++){
+      const cells=[],caps=[];
+      for(let c=0;c<2;c++){
+        const it=pg.items[r*2+c];
+        let para=P(R(''));
+        if(it.img&&it.w&&it.h){
+          const maxW=325,maxH=222; const s=Math.min(maxW/it.w,maxH/it.h);
+          para=new D.Paragraph({alignment:CEN,children:[new D.ImageRun({type:'jpg',data:b64ToBytes(it.img),transformation:{width:Math.round(it.w*s),height:Math.round(it.h*s)}})]});
+        }
+        cells.push(C(para,PG[c]));
+        caps.push(C(P(R(it.caption),{a:CEN}),PG[c]));
+      }
+      pr.push(TR(cells,3450,true),TR(caps,380));
+    }
+    out.push(T(pr,PG));
+  });
+
+  return new D.Document({
+    creator:'รายงานการทำงานประจำวัน',title:'รายงานการทำงานประจำวัน',
+    styles:{default:{document:{run:{font:FONT,size:28}}}},
+    sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:900,right:850,bottom:446,left:850,header:432,footer:461}}},children:out}]
+  });
+}
+
+
+/* ---------- signature pad ---------- */
+const sigModal=document.getElementById('sigModal'), cv=document.getElementById('sigCanvas');
+let sigWho=null, drawing=false, dirty=false, last=null, ctx=null;
+function openSig(who){
+  sigWho=who; sigModal.classList.add('on');
+  document.getElementById('sigTitle').textContent='เซ็นชื่อ: '+(who==='reporter'?'รายงานโดย':'ทบทวนโดย');
+  const r=cv.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr);
+  ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#0b1f4d'; ctx.lineWidth=2.4;
+  ctx.clearRect(0,0,r.width,r.height); dirty=false;
+}
+function closeSig(){ sigModal.classList.remove('on'); sigWho=null; }
+const pt=e=>{const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
+cv.addEventListener('pointerdown',e=>{drawing=true;dirty=true;last=pt(e);cv.setPointerCapture(e.pointerId);ctx.beginPath();ctx.arc(last.x,last.y,ctx.lineWidth/2,0,Math.PI*2);ctx.fillStyle=ctx.strokeStyle;ctx.fill();});
+cv.addEventListener('pointermove',e=>{if(!drawing)return;const p=pt(e);ctx.beginPath();ctx.moveTo(last.x,last.y);
+  const mx=(last.x+p.x)/2,my=(last.y+p.y)/2;ctx.quadraticCurveTo(last.x,last.y,mx,my);ctx.lineTo(p.x,p.y);ctx.stroke();last=p;});
+['pointerup','pointercancel','pointerleave'].forEach(t=>cv.addEventListener(t,()=>{drawing=false;}));
+document.getElementById('sigClear').onclick=()=>{const r=cv.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);dirty=false;};
+document.getElementById('sigCancel').onclick=closeSig;
+sigModal.addEventListener('click',e=>{if(e.target===sigModal)closeSig();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sigModal.classList.contains('on'))closeSig();});
+document.getElementById('sigSave').onclick=()=>{
+  if(!dirty){toast('ยังไม่มีลายเซ็นในกรอบ');return;}
+  // crop to drawn area
+  const w=cv.width,h=cv.height,d=cv.getContext('2d').getImageData(0,0,w,h).data;
+  let x0=w,y0=h,x1=-1,y1=-1;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4+3]>10){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
+  if(x1<0){toast('ยังไม่มีลายเซ็นในกรอบ');return;}
+  const m=6; x0=Math.max(0,x0-m);y0=Math.max(0,y0-m);x1=Math.min(w-1,x1+m);y1=Math.min(h-1,y1+m);
+  let cw=x1-x0+1,ch=y1-y0+1; const s=Math.min(1,500/cw,200/ch);
+  const out=document.createElement('canvas'); out.width=Math.round(cw*s); out.height=Math.round(ch*s);
+  out.getContext('2d').drawImage(cv,x0,y0,cw,ch,0,0,out.width,out.height);
+  Object.assign(S[sigWho],{signImg:out.toDataURL('image/png'),signW:out.width,signH:out.height});
+  closeSig(); save(); render(); toast('ใส่ลายเซ็นแล้ว');
+};
+/* ---------- responsive scale ---------- */
+function fit(){const z=Math.min(1,(document.documentElement.clientWidth-24)/794);document.documentElement.style.setProperty('--z',z.toFixed(4));}
+window.addEventListener('resize',fit); fit();
+
+render();
+stateEl.textContent='บันทึกร่างอัตโนมัติในเบราว์เซอร์นี้';
+})();
+</script>
+</body>
+</html>
